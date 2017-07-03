@@ -7,7 +7,7 @@ import time
 # Magical Values 
 #==============================================================================
 Er = 0.4
-
+gain = 0.7
 
 
 #==============================================================================
@@ -64,6 +64,7 @@ while(1):
     LowB =np.array([AVB_h-Er*AVB_h,AVB_s-Er*AVB_s,AVB_v-Er*AVB_v])
     UpB = np.array([AVB_h+Er*AVB_h,AVB_s+Er*AVB_s,AVB_v+Er*AVB_v])
     mask_b = cv2.inRange(HSVB,LowB,UpB)
+    
     LowY =np.array([AVY_h-Er*AVY_h,AVY_s-Er*AVY_s,AVY_v-Er*AVY_v])
     UpY = np.array([AVY_h+Er*AVY_h,AVY_s+Er*AVY_s,AVY_v+Er*AVY_v])
     mask_y = cv2.inRange(HSVY,LowY,UpY)
@@ -87,13 +88,13 @@ while(1):
 #==============================================================================
 # Angle magic via maths and shit
 #==============================================================================
-    crop_b = mask_b[100:200,60:-1]    
-    s1_b = np.nonzero(crop_b[0,:])[0][0] if np.sum(crop_b[0,:])>0 else 480
-    s2_b = np.nonzero(crop_b[20,:])[0][0] if np.sum(crop_b[20,:])>0 else 480
-    s3_b = np.nonzero(crop_b[40,:])[0][0] if np.sum(crop_b[40,:])>0 else 480
-    s4_b = np.nonzero(crop_b[60,:])[0][0] if np.sum(crop_b[60,:])>0 else 480
-    s5_b = np.nonzero(crop_b[80,:])[0][0] if np.sum(crop_b[80,:])>0 else 480
-    s6_b = np.nonzero(crop_b[99,:])[0][0] if np.sum(crop_b[99,:])>0 else 480
+    crop_b = mask_b[100:200,90:-1]    
+    bot = np.nonzero(crop_b[0,:])[0][0] if np.sum(crop_b[0,:])>0 else 100000
+#    s2_b = np.nonzero(crop_b[20,:])[0][0] if np.sum(crop_b[20,:])>0 else 544-90
+#    s3_b = np.nonzero(crop_b[40,:])[0][0] if np.sum(crop_b[40,:])>0 else 544-90
+#    s4_b = np.nonzero(crop_b[60,:])[0][0] if np.sum(crop_b[60,:])>0 else 544-90
+#    s5_b = np.nonzero(crop_b[80,:])[0][0] if np.sum(crop_b[80,:])>0 else 544-90
+    top = np.nonzero(crop_b[99,:])[0][0] if np.sum(crop_b[99,:])>0 else 100000
 #    yb = np.array([99,80,60,40,20,0])
 #    xb = np.array([s1_b,s2_b,s3_b,s4_b,s5_b,s6_b])
 #    lineb = np.polyfit(xb, yb, 1)
@@ -103,6 +104,14 @@ while(1):
 #    plt.show()
 #    print(angle_b)
     cv2.imshow('Praise Matlab',crop_b)
+#    print(s1_b,s6_b)
+    if top>bot:
+        print(35)
+    elif bot == 100000:
+        print(50)
+    else:
+        print(bot/240*50*gain)
+        
 #==============================================================================
 #     Exit Shit 
 #==============================================================================
