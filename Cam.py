@@ -1,5 +1,13 @@
 import cv2 
 import numpy as np
+import socket
+
+ADDRESS = "10.1.1.2"
+PORT = 3000
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((ADDRESS, PORT))
+
 #cap.release
 cap = cv2.VideoCapture(0)
 #cap = cv2.VideoCapture('C:/Users/Rudge-Top/Desktop/droid1.mp4')
@@ -90,10 +98,14 @@ while(1):
 #    cv2.putText(showme, "%.2f"%Y_Angle,(400,100), font, 1,(0,0,255),2,cv2.LINE_AA)
     cv2.putText(showme,"%.2f"%DirB,(250,100), font, 1,(255,255,255),2,cv2.LINE_AA)
 
+    val = "S{}".format(DirB)
+    s.send(val.encode())
+
     cv2.imshow('Hardcore memery',showme)
     k = cv2.waitKey(5) & 0xFF
     if k == 27:
         break
 cap.release()
 cv2.destroyAllWindows()
+s.close()
 #del k
