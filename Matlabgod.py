@@ -2,7 +2,7 @@
 import cv2 
 import numpy as np
 from matplotlib import pyplot as plt
-
+import time 
 #==============================================================================
 # Magical Values 
 #==============================================================================
@@ -14,24 +14,26 @@ Er = 0.4
 # Camera Setup 
 #==============================================================================
 CamBlue = cv2.VideoCapture(0)
-CamBlue.set(3,480)
-CamBlue.set(4,360)
+CamBlue.set(4,288)
+CamBlue.set(3,544)
 CamYellow = cv2.VideoCapture(1)
-CamYellow.set(3,480)
-CamYellow.set(4,360)
+CamYellow.set(4,288)
+CamYellow.set(4,544)
 
 #==============================================================================
 #Set Magic Squares 
 #==============================================================================
-MagicB = [0,380,90,480]#(0,1) top left (2,3) Bottom Right 
+MagicB = [0,220,120,288]#(0,1) top left (2,3) Bottom Right 
 #With (X,Y)
-MagicY = [0,380,90,480]
+MagicY = [535-110,240,535,288]
 #CropB = [300:370,0:-1]
 #==============================================================================
 # Main 
 #==============================================================================
 while(1):
     _, frameB = CamBlue.read()
+    print()
+    time.sleep(0.05)
     _, frameY = CamBlue.read()
 
 #    _, frameY = CamYellow.read()
@@ -76,7 +78,7 @@ while(1):
 #==============================================================================
 #     Show
 #==============================================================================
-    resb = cv2.bitwise_and(frameY,frameY, mask= mask_b)
+    resb = cv2.bitwise_and(frameB,frameB, mask= mask_b)
     resy = cv2.bitwise_and(frameY,frameY, mask= mask_y)
 
 #    cv2.imshow('Praise Matlab',resb)
@@ -85,21 +87,21 @@ while(1):
 #==============================================================================
 # Angle magic via maths and shit
 #==============================================================================
-    crop_b = mask_b[200:300,60:-1]    
+    crop_b = mask_b[100:200,60:-1]    
     s1_b = np.nonzero(crop_b[0,:])[0][0] if np.sum(crop_b[0,:])>0 else 480
     s2_b = np.nonzero(crop_b[20,:])[0][0] if np.sum(crop_b[20,:])>0 else 480
     s3_b = np.nonzero(crop_b[40,:])[0][0] if np.sum(crop_b[40,:])>0 else 480
     s4_b = np.nonzero(crop_b[60,:])[0][0] if np.sum(crop_b[60,:])>0 else 480
     s5_b = np.nonzero(crop_b[80,:])[0][0] if np.sum(crop_b[80,:])>0 else 480
     s6_b = np.nonzero(crop_b[99,:])[0][0] if np.sum(crop_b[99,:])>0 else 480
-    yb = np.array([99,80,60,40,20,0])
-    xb = np.array([s1_b,s2_b,s3_b,s4_b,s5_b,s6_b])
-    lineb = np.polyfit(xb, yb, 1)
-    angle_b = np.rad2deg(np.arctan(lineb[0])) 
+#    yb = np.array([99,80,60,40,20,0])
+#    xb = np.array([s1_b,s2_b,s3_b,s4_b,s5_b,s6_b])
+#    lineb = np.polyfit(xb, yb, 1)
+#    angle_b = np.rad2deg(np.arctan(lineb[0])) 
 #    plt.plot(xb, yb, 'ro')
 #    plt.axis([0, 6, 0, 20])
 #    plt.show()
-    print(angle_b)
+#    print(angle_b)
     cv2.imshow('Praise Matlab',crop_b)
 #==============================================================================
 #     Exit Shit 
@@ -108,6 +110,7 @@ while(1):
     if k == 27:
         break
 CamBlue.release()
+CamYellow.release()
 cv2.destroyAllWindows()
 del k
 
