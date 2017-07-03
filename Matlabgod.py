@@ -14,11 +14,11 @@ Er = 0.4
 # Camera Setup 
 #==============================================================================
 CamBlue = cv2.VideoCapture(0)
-#CamBlue.set(3,480)
-#CamBlue.set(4,360)
-#CamYellow = cv2.VideoCapture(1)
-#CamYellow.set(3,480)
-#CamYellow.set(4,360)
+CamBlue.set(3,480)
+CamBlue.set(4,360)
+CamYellow = cv2.VideoCapture(1)
+CamYellow.set(3,480)
+CamYellow.set(4,360)
 
 #==============================================================================
 #Set Magic Squares 
@@ -85,7 +85,7 @@ while(1):
 #==============================================================================
 # Angle magic via maths and shit
 #==============================================================================
-    crop_b = mask_b[200:300,0:-1]    
+    crop_b = mask_b[200:300,60:-1]    
     s1_b = np.nonzero(crop_b[0,:])[0][0] if np.sum(crop_b[0,:])>0 else 480
     s2_b = np.nonzero(crop_b[20,:])[0][0] if np.sum(crop_b[20,:])>0 else 480
     s3_b = np.nonzero(crop_b[40,:])[0][0] if np.sum(crop_b[40,:])>0 else 480
