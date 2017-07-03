@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 import cv2 
 import numpy as np
-#from matplotlib import pyplot as plt
+import socket
 import time 
+ADDRESS = "10.1.1.2"
+PORT = 3000
 
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((ADDRESS, PORT))
 
 def hsvAverage(img, MagicY):
     h = 0.0;
@@ -26,7 +30,7 @@ def hsvAverage(img, MagicY):
 # Magical Values 
 #==============================================================================
 Er = 0.3
-
+gain = 0.8
 #==============================================================================
 # Camera Setup 
 #==============================================================================
@@ -113,25 +117,29 @@ while(1):
 #==============================================================================
 # Angle magic via maths and shit
 #==============================================================================
-    # crop_b = mask_b[100:200,60:-1]    
-    # s1_b = np.nonzero(crop_b[0,:])[0][0] if np.sum(crop_b[0,:])>0 else 480
-    # s2_b = np.nonzero(crop_b[20,:])[0][0] if np.sum(crop_b[20,:])>0 else 480
-    # s3_b = np.nonzero(crop_b[40,:])[0][0] if np.sum(crop_b[40,:])>0 else 480
-    # s4_b = np.nonzero(crop_b[60,:])[0][0] if np.sum(crop_b[60,:])>0 else 480
-    # s5_b = np.nonzero(crop_b[80,:])[0][0] if np.sum(crop_b[80,:])>0 else 480
-    # s6_b = np.nonzero(crop_b[99,:])[0][0] if np.sum(crop_b[99,:])>0 else 480
-#    yb = np.array([99,80,60,40,20,0])
-#    xb = np.array([s1_b,s2_b,s3_b,s4_b,s5_b,s6_b])
-#    lineb = np.polyfit(xb, yb, 1)
-#    angle_b = np.rad2deg(np.arctan(lineb[0])) 
-#    plt.plot(xb, yb, 'ro')
-#    plt.axis([0, 6, 0, 20])
-#    plt.show()
-#    print(angle_b)
-    # cv2.imshow('Praise Matlab Blue',resb)
+crop_b = mask_b[100:200,90:-1]
+    try:
+        top = np.nonzero(crop_b[10,:])[0][0] if np.sum(crop_b[0,:])>0 else 0
+#    s2_b = np.nonzero(crop_b[20,:])[0][0] if np.sum(crop_b[20,:])>0 else 544-90
+#    s3_b = np.nonzero(crop_b[40,:])[0][0] if np.sum(crop_b[40,:])>0 else 544-90
+#    s4_b = np.nonzero(crop_b[60,:])[0][0] if np.sum(crop_b[60,:])>0 else 544-90
+#    s5_b = np.nonzero(crop_b[80,:])[0][0] if np.sum(crop_b[80,:])>0 else 544-90
+        bot = np.nonzero(crop_b[99,:])[0][0] if np.sum(crop_b[99,:])>0 else 100000
+    except:
+        bot = 100000
+        pass
 
-    # cv2.imshow('Praise Matlab Box',frameY[MagicY[1]:MagicY[3],MagicY[0]:MagicY[2]])
-    # cv2.imshow('Praise Matlab Yellow',resy)
+    cv2.imshow('Praise Matlab',crop_b)
+    if top-50>bot:
+        DirB = 40
+    elif bot == 100000:
+        DirB = 55
+    else:
+        DirB = bot/300*50*gain
+        print(top,bot,bot/300*50*gain)
+    val = "S{}".format(DirB)
+    s.send(val.encode())
+ 
 #==============================================================================
 #     Exit Shit 
 #==============================================================================
@@ -141,3 +149,4 @@ while(1):
 CamBlue.release()
 CamYellow.release()
 cv2.destroyAllWindows()
+s.close
