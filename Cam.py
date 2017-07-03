@@ -13,8 +13,8 @@ while(1):
     frame = frame[340:-1,:]
     
     #COnvert Frame to HSV
-    hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
-#    hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2LAB)
+#    hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
+    hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2LAB)
 
     #Apply Gaussian Blur to the Frame 
     Blur = cv2.GaussianBlur(hsv,(5,5),0) #This is all that is required for a Guassian Blur 
@@ -22,17 +22,17 @@ while(1):
 #     HSV
 #==============================================================================
     #Create a Mask to Find the Colour Blue 
-    lower_blue = np.array([100,30,30])
-    upper_blue = np.array([140,255,255])
-    lower_yellow =np.array([20,50,50])
-    upper_yellow = np.array([60,255,255])
+#    lower_blue = np.array([105,30,30])
+#    upper_blue = np.array([140,255,255])
+#    lower_yellow =np.array([20,50,50])
+#    upper_yellow = np.array([60,255,255])
 #==============================================================================
 # LAB 
 #==============================================================================
-#    lower_blue = np.array([6*(255/100),-5+128,-36+128])
-#    upper_blue = np.array([100*(255/100),27+128,-9+128])
-#    lower_yellow = np.array([37*(255/100),-10+128,50+128])
-#    upper_yellow = np.array([67*(255/100),2+128,61+128])
+    lower_blue = np.array([6*(255/100),-5+128,-36+128])
+    upper_blue = np.array([100*(255/100),27+128,-9+128])
+    lower_yellow = np.array([37*(255/100),-10+128,50+128])
+    upper_yellow = np.array([67*(255/100),2+128,61+128])
 #==============================================================================
 #     
 #==============================================================================
@@ -40,7 +40,10 @@ while(1):
     mask2 = cv2.inRange(hsv, lower_yellow, upper_yellow)
     kernel = np.ones((5,5),np.uint8)
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
-    mask2 = cv2.morphologyEx(mask2, cv2.MORPH_OPEN, kernel)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+
+#    mask2 = cv2.morphologyEx(mask2, cv2.MORPH_OPEN, kernel)
 
 #    mask = cv2.erode(mask,kernel,iterations = 1)
 #    mask = cv2.GaussianBlur(mask,(5,5),0) #This is all that is required for a Guassian Blur 
@@ -56,10 +59,12 @@ while(1):
             [vx_y,vy_y] = [1,1]
         else :
             [vx_y,vy_y,x_y,y_y] = cv2.fitLine(idx_y, cv2.DIST_L2,0,0.05,0.05)
+            print(x_y,y_y)
         if cv2.contourArea(idx)<300:
             [vx,vy] = [1,1]
         else:    
             [vx,vy,x,y] = cv2.fitLine(idx, cv2.DIST_L2,0,0.1,0.1)
+            print(x,y)
         
     except:
         [vx,vy,vx_y,vy_y] = [1,0,1,0]
@@ -80,7 +85,7 @@ while(1):
     elif B_Angle == 0:
         DirB = 45
     else:
-        DirB = 100+(B_Angle*50/45)
+        DirB = 90+(B_Angle*50/45)
 #    cv2.putText(showme, "%.2f"%B_Angle ,(100,100), font, 1,(0,0,255),2,cv2.LINE_AA)
 #    cv2.putText(showme, "%.2f"%Y_Angle,(400,100), font, 1,(0,0,255),2,cv2.LINE_AA)
     cv2.putText(showme,"%.2f"%DirB,(250,100), font, 1,(255,255,255),2,cv2.LINE_AA)
